@@ -1,0 +1,20 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+	<include layout="@layout/title_bar"/>
+	<RelativeLayout android:id="@+id/adLayout"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"/>
+	    
+	<ListView 
+	    android:id="@+id/cameraList"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:divider="@drawable/list_divider"
+	    android:dividerHeight="@dimen/dp_1"/>
+    
+</LinearLayout>

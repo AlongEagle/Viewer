@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">众云监控</string>
+    <string name="online">在线</string>
+    <string name="pwd_wrong">密码错误</string>
+    <string name="offline">离线</string>
+    <string name="add_cid">添加摄像头</string>
+    <string name="add_cid_by_qr">扫描二维码添加摄像头</string>
+    <string name="help">帮助</string>
+    <string name="feedback">用户反馈</string>
+    <string name="about">关于</string>
+    <string name="disclaimer">免责声明</string>
+    <string name="start">知道了</string>
+    <string name="delete_camera_dlg_title">你确定要删除此摄像头？</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="add_camera_dlg_title">添加新摄像头</string>
+    <string name="cid">CID</string>
+    <string name="password">密码</string>
+    <string name="empty_info">CID和密码不能为空！</string>
+    <string name="exit_str">确定要退出吗？</string>
+    <string name="camera_offline">摄像头不在线！</string>
+    <string name="camera_link_fail">摄像头连接失败</string>
+    <string name="exit_camera">确定要关闭视频吗？</string>
+    <string name="exit">退出</string>
+    <string name="waiting">实时视频等待中...</string>
+    <string name="time_up_error">您还没有注册成为我们的开发者，所以只能观看2分钟视频，快来注册吧！</string>
+    <string name="wrong_package_name">如果您要创建自己的应用，请到官网注册并获取授权！</string>
+	<string name="about_str"> %1$s \n版本：%2$s \n南京云恩通讯科技有限公司(C)2011-2015 \ndev.ichano.cn \n开源协议：Apache License 2.0 \nQQ群：490534393</string>
+</resources>
