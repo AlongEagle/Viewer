@@ -65,11 +65,10 @@ public class MyViewerHelper extends ViewerInitHelper{
 
 	@Override
 	public void onLoginResult(LoginState loginState, int progressRate, LoginError errorCode) {
-		if(null == mLoginListener) return;
 		if(LoginState.CONNECTED == loginState){
-			mLoginListener.onLoginResult(true);
+			if(null != mLoginListener) mLoginListener.onLoginResult(true);
 		}else if(LoginState.DISCONNECT == loginState){
-			mLoginListener.onLoginResult(false);
+			if(null != mLoginListener) mLoginListener.onLoginResult(false);
 			//如果想做成产品，需要到我们的官网注册并得到授权，否则只能做演示使用。
 			if(errorCode == LoginError.ERR_WRONG_PACKAGE){
 				Toast.makeText(context, R.string.wrong_package_name, Toast.LENGTH_LONG).show();
