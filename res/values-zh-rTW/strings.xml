@@ -27,5 +27,5 @@
     <string name="waiting">實時視頻等待中...</string>
     <string name="time_up_error">您還沒有註冊成為我們的開發者，所以只能觀看2分鐘視頻，快來註冊吧！</string>
     <string name="wrong_package_name">如果您要創建自己的應用，請到官網註冊并獲取授權！</string>
-	<string name="about_str"> %1$s \n版本：%2$s \n南京云恩通訊科技有限公司(C)2011-2015 \ndev.ichano.cn \n開源協議：Apache License 2.0 \nQQ群：490534393</string>
+	<string name="about_str"> %1$s \n版本：%2$s \n南京云恩通訊科技有限公司(C)2011-2015 \ndev.ichano.cn \n開源協議：Apache License 2.0 \nQQ用户群：151981896</string>
 </resources>

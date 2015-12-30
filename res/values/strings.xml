@@ -27,5 +27,5 @@
     <string name="waiting">Live video is buffering…</string>
     <string name="time_up_error">You are not our developer, only can watch for two minutes. Join us, please!</string>
     <string name="wrong_package_name">If you are a developer, go and sign in our developer web site.</string>
-	<string name="about_str"> %1$s \nVersion：%2$s \niChano incorporation (C)2011-2015 \ndev.ichano.cn \nLicensed under the Apache License, Version 2.0 \nQQ群：490534393</string>
+	<string name="about_str"> %1$s \nVersion：%2$s \niChano incorporation (C)2011-2015 \ndev.ichano.cn \nLicensed under the Apache License, Version 2.0 \nQQ用户群：151981896</string>
 </resources>
