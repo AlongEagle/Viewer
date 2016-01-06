@@ -62,6 +62,7 @@ public class WatchActivity extends Activity {
 		String title = getIntent().getStringExtra(Constants.INTENT_CAMERA_NAME);
 		titleView.setText(title);
 		mGLMediaView.bindCid(mCid, DEFAULT_CAMERA_INDEX);
+		mGLMediaView.openAudio(true);
 		mGLMediaView.setOnLinkCameraStatusListener(new LinkCameraStatusListener() {
 			
 			@Override
