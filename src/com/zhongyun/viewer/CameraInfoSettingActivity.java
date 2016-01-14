@@ -19,41 +19,41 @@ import android.widget.Toast;
 public class CameraInfoSettingActivity extends BaseActivity
 	implements View.OnClickListener, CommandCallback{
 
-	private TextView titleView;
-	private EditText deviceNameView;
-	private EditText passwordView;
-	private EditText confirmPasswordView;
-	private Button modifyBtn;
-	private Command command;
-	private StreamerInfoMgr streamerInfoMgr;
-	private CameraInfoManager cameraInfoManager;
-	private CameraInfo cameraInfo;
-	private long changePwdRequestId = 0;
+	private TextView mTitleView;
+	private EditText mDeviceNameView;
+	private EditText mPasswordView;
+	private EditText mConfirmPasswordView;
+	private Button mModifyBtn;
+	private Command mCommand;
+	private StreamerInfoMgr mStreamerInfoMgr;
+	private CameraInfoManager mCameraInfoManager;
+	private CameraInfo mCameraInfo;
+	private long mChangePwdRequestId = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_camera_info_setting);
 		
-		titleView = (TextView) findViewById(R.id.title);
-		titleView.setText(R.string.modify_camera_info);
-		deviceNameView = (EditText) findViewById(R.id.device_name);
-		passwordView = (EditText) findViewById(R.id.password);
-		confirmPasswordView = (EditText) findViewById(R.id.password_confirm);
-		modifyBtn = (Button) findViewById(R.id.modify);
-		modifyBtn.setOnClickListener(this);
+		mTitleView = (TextView) findViewById(R.id.title);
+		mTitleView.setText(R.string.modify_camera_info);
+		mDeviceNameView = (EditText) findViewById(R.id.device_name);
+		mPasswordView = (EditText) findViewById(R.id.password);
+		mConfirmPasswordView = (EditText) findViewById(R.id.password_confirm);
+		mModifyBtn = (Button) findViewById(R.id.modify);
+		mModifyBtn.setOnClickListener(this);
 		
-		command = Viewer.getViewer().getCommand();
-		command.setCmdCallback(this);
-		streamerInfoMgr = Viewer.getViewer().getStreamerInfoMgr();
+		mCommand = Viewer.getViewer().getCommand();
+		mCommand.setCmdCallback(this);
+		mStreamerInfoMgr = Viewer.getViewer().getStreamerInfoMgr();
 		
-		cameraInfoManager = new CameraInfoManager(this);
+		mCameraInfoManager = new CameraInfoManager(this);
 		Intent intent = getIntent();
 		if(null != intent){
 			long cid = intent.getLongExtra(Constants.INTENT_CID, 0);
-			cameraInfo = cameraInfoManager.getCameraInfo(cid);
-			deviceNameView.setText(cameraInfo.getCameraName());
-			passwordView.setText(cameraInfo.getCameraPwd());
-			confirmPasswordView.setText(cameraInfo.getCameraPwd());
+			mCameraInfo = mCameraInfoManager.getCameraInfo(cid);
+			mDeviceNameView.setText(mCameraInfo.getCameraName());
+			mPasswordView.setText(mCameraInfo.getCameraPwd());
+			mConfirmPasswordView.setText(mCameraInfo.getCameraPwd());
 		}
 		
 	}
@@ -62,9 +62,9 @@ public class CameraInfoSettingActivity extends BaseActivity
 		int id = v.getId();
 		switch(id){
 		case R.id.modify:
-			String deviceName = deviceNameView.getText().toString();
-			String pwd = passwordView.getText().toString();
-			String pwdConfirm = confirmPasswordView.getText().toString();
+			String deviceName = mDeviceNameView.getText().toString();
+			String pwd = mPasswordView.getText().toString();
+			String pwdConfirm = mConfirmPasswordView.getText().toString();
 			
 			if(null == deviceName || null == pwd || null == pwdConfirm){
 				Toast.makeText(CameraInfoSettingActivity.this, R.string.empty_info, Toast.LENGTH_LONG).show();
@@ -90,19 +90,19 @@ public class CameraInfoSettingActivity extends BaseActivity
 				Toast.makeText(CameraInfoSettingActivity.this, R.string.invalid_device_name, Toast.LENGTH_LONG).show();
 				return;
 			}
-			if(!deviceName.equals(cameraInfo.getCameraName())){
-				boolean ret = streamerInfoMgr.setStreamerName(cameraInfo.getCid(), deviceName);
+			if(!deviceName.equals(mCameraInfo.getCameraName())){
+				boolean ret = mStreamerInfoMgr.setStreamerName(mCameraInfo.getCid(), deviceName);
 				if(ret) {
-					cameraInfo.setCameraName(deviceName);
-					cameraInfoManager.update(cameraInfo);
+					mCameraInfo.setCameraName(deviceName);
+					mCameraInfoManager.update(mCameraInfo);
 					Toast.makeText(CameraInfoSettingActivity.this, R.string.change_device_name_success, Toast.LENGTH_LONG).show();
 				}else{
 					Toast.makeText(CameraInfoSettingActivity.this, R.string.change_device_name_fail, Toast.LENGTH_LONG).show();
 				}
 			}
-			if(!pwd.equals(cameraInfo.getCameraPwd())){
-				changePwdRequestId = command.changeStreamerLoginUserPwd(cameraInfo.getCid(), cameraInfo.getCameraUser(), pwd);
-				cameraInfo.setCameraPwd(pwd);
+			if(!pwd.equals(mCameraInfo.getCameraPwd())){
+				mChangePwdRequestId = mCommand.changeStreamerLoginUserPwd(mCameraInfo.getCid(), mCameraInfo.getCameraUser(), pwd);
+				mCameraInfo.setCameraPwd(pwd);
 			}
 			
 			break;
@@ -111,9 +111,9 @@ public class CameraInfoSettingActivity extends BaseActivity
 	
 	@Override
 	public void onCmdRequestStatus(long requestID, int statusCode) {
-		if(changePwdRequestId == requestID){
+		if(mChangePwdRequestId == requestID){
 			if(0 == statusCode){
-				cameraInfoManager.update(cameraInfo);
+				mCameraInfoManager.update(mCameraInfo);
 				Toast.makeText(CameraInfoSettingActivity.this, R.string.change_password_success, Toast.LENGTH_LONG).show();
 			}else{
 				Toast.makeText(CameraInfoSettingActivity.this, R.string.change_password_fail, Toast.LENGTH_LONG).show();
