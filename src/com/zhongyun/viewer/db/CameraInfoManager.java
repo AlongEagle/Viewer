@@ -127,6 +127,12 @@ public class CameraInfoManager extends SQLiteOpenHelper{
 		return info;
 	}
 	
+	public CameraInfo getCameraInfo(long cid){
+		SQLiteDatabase db = this.getWritableDatabase();
+		long rowID = 0;
+		return getCameraInfo(db, cid, rowID);
+	}
+	
 	public ArrayList<CameraInfo> getAllCameraInfos(){
 		SQLiteDatabase db = this.getWritableDatabase();
 		ArrayList<CameraInfo> infos = new ArrayList<CameraInfo>();

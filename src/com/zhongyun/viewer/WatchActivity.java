@@ -38,7 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class WatchActivity extends Activity {
+public class WatchActivity extends BaseActivity {
 
 	private static final String TIME_UP_ERROR = "TIME_UP";
 	private static final int DEFAULT_CAMERA_INDEX = 0;
@@ -53,9 +53,7 @@ public class WatchActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		AppUtils.setStatusBarTransparent(this, getResources().getColor(R.color.title_red));
 		TextView titleView = (TextView) findViewById(R.id.title);
 		mGLMediaView = (GLMediaView) findViewById(R.id.media_view);
 		mCid = getIntent().getLongExtra(Constants.INTENT_CID, 0);

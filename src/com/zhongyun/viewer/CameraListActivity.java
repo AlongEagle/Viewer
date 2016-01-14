@@ -68,7 +68,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CameraListActivity extends Activity
+public class CameraListActivity extends BaseActivity
 	implements MyViewerHelper.CameraStateListener, View.OnClickListener,
 	PopupMenu.OnMenuItemClickListener, AdapterView.OnItemClickListener{
 
@@ -104,9 +104,7 @@ public class CameraListActivity extends Activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.camera_list);
-		AppUtils.setStatusBarTransparent(this, getResources().getColor(R.color.title_red));
 		mLayoutInflater = LayoutInflater.from(this);
 		mCameraListView = (ListView) findViewById(R.id.cameraList);
 		TextView titleView = (TextView) findViewById(R.id.title);
@@ -513,7 +511,14 @@ public class CameraListActivity extends Activity
 				
 				@Override
 				public void onClick(View v) {
-					
+					if(info.getIsOnline()){
+						Intent intent = new Intent();
+						intent.setClass(getApplicationContext(), CameraInfoSettingActivity.class);
+						intent.putExtra(Constants.INTENT_CID, info.getCid());
+						startActivity(intent);
+					}else{
+						Toast.makeText(CameraListActivity.this, R.string.camera_offline, Toast.LENGTH_LONG).show();
+					}
 				}
 			});
 			deleteView.setOnClickListener(new OnClickListener() {
