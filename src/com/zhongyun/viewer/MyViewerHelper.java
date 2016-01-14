@@ -15,28 +15,77 @@
  */
 package com.zhongyun.viewer;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.view.LayoutInflater;
 import android.widget.Toast;
 
+import com.ichano.rvs.viewer.Viewer;
+import com.ichano.rvs.viewer.bean.StreamerInfo;
+import com.ichano.rvs.viewer.callback.RecvJpegListener;
 import com.ichano.rvs.viewer.constant.LoginError;
 import com.ichano.rvs.viewer.constant.LoginState;
+import com.ichano.rvs.viewer.constant.RvsJpegType;
 import com.ichano.rvs.viewer.constant.RvsSessionState;
 import com.ichano.rvs.viewer.constant.StreamerConfigState;
 import com.ichano.rvs.viewer.constant.StreamerPresenceState;
 import com.ichano.rvs.viewer.ui.ViewerInitHelper;
+import com.zhongyun.viewer.db.CameraInfo;
+import com.zhongyun.viewer.db.CameraInfoManager;
 
 public class MyViewerHelper extends ViewerInitHelper{
 
 	private static MyViewerHelper mViewer;
 	private LoginListener mLoginListener;
-	private CameraStateListener mCameraStateListener;
+	private List<CameraStateListener> mCameraStateListeners = new ArrayList<CameraStateListener>();
+	
+	private static List<CameraInfo> mCameraInfos;
+	private static CameraInfoManager mCameraInfoManager;
+	
+	private Handler mHandler = new Handler();
+	private final static long GET_THUMB_PERIOD = 600000;
+	@SuppressLint("UseSparseArrays")
+	private HashMap<Long, Long> mThumbsGetTime = new HashMap<Long, Long>();
+	private HashMap<Long, Long> mThumbRequestMap = new HashMap<Long, Long>();
 	
 	public static MyViewerHelper getInstance(Context applicationContext){
 		if(null == mViewer){
 			mViewer = new MyViewerHelper(applicationContext);
+			
+			mCameraInfoManager = new CameraInfoManager(applicationContext);
+			mCameraInfos = mCameraInfoManager.getAllCameraInfos();
+			if(null == mCameraInfos) mCameraInfos = new ArrayList<CameraInfo>();
 		}
 		mViewer.login();
 		return mViewer;
+	}
+	
+	public List<CameraInfo> getAllCameraInfos(){
+		return mCameraInfos;
+	}
+	
+	public CameraInfo getCameraInfo(long cid){
+		for (CameraInfo info : mCameraInfos) {
+			if(cid == info.getCid()){
+				return info;
+			}
+		}
+		return null;
+	}
+	
+	public void addCameraInfo(CameraInfo info){
+		mCameraInfos.add(info);
+	}
+	
+	public void removeCameraInfo(CameraInfo info){
+		mCameraInfos.remove(info);
 	}
 	
 	private MyViewerHelper(Context applicationContext) {
@@ -77,10 +126,40 @@ public class MyViewerHelper extends ViewerInitHelper{
 	}
 
 	@Override
-	public void onSessionStateChange(long remoteCID, RvsSessionState sessionState) {
-		if(null != mCameraStateListener){
-			 mCameraStateListener.onCameraConnectionChange(remoteCID, RvsSessionState.CONNECTED == sessionState);
-		 }
+	public void onSessionStateChange(final long streamerCID, final RvsSessionState sessionState) {
+		long lastTime = (null == mThumbsGetTime.get(streamerCID)) ? 0 : mThumbsGetTime.get(streamerCID);
+		long cur = System.currentTimeMillis();
+		
+		//do not get thumb so busy.
+		if(cur - lastTime > GET_THUMB_PERIOD){
+			mThumbsGetTime.put(streamerCID, cur);
+			long requestId =  Viewer.getViewer().getMedia().requestJpeg(streamerCID, 0, 0, RvsJpegType.ICON, new RecvJpegListener() {
+				
+				@Override
+				public void onRecvJpeg(long requestId,byte[] data) {
+					if(null == mThumbRequestMap.get(requestId)) return;
+					long cid = mThumbRequestMap.get(requestId);
+					Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+					CameraInfo info = getCameraInfo(cid);
+					if(null != info && null != bmp){
+						info.setCameraThumb(bmp);
+						mCameraInfoManager.update(info);
+						mHandler.post(new Runnable() {
+							
+							@Override
+							public void run() {
+								if(mCameraStateListeners.size() > 0){
+									 for (CameraStateListener l : mCameraStateListeners) {
+										 l.onCameraConnectionChange(streamerCID, RvsSessionState.CONNECTED == sessionState);
+									}
+								 }
+							}
+						});
+					}
+				}
+			});
+			mThumbRequestMap.put(requestId, streamerCID);
+		}
 	}
 
 	@Override
@@ -89,10 +168,40 @@ public class MyViewerHelper extends ViewerInitHelper{
 	}
 
 	@Override
-	public void onStreamerPresenceState(long streamerCID, StreamerPresenceState state) {
-		 if(null != mCameraStateListener){
-			 mCameraStateListener.onCameraStateChange(streamerCID, state);
-		 }
+	public void onStreamerPresenceState(long streamerCid, StreamerPresenceState state) {
+		CameraInfo info = getCameraInfo(streamerCid);
+		if(null != info){
+			StreamerInfo  sinfo = Viewer.getViewer().getStreamerInfoMgr().getStreamerInfo(streamerCid);
+			String name = sinfo.getDeviceName();
+			if(null != name && (!info.getCameraName().equals(name))){
+				info.setCameraName(name);
+				mCameraInfoManager.update(info);
+			}
+			if(StreamerPresenceState.USRNAME_PWD_ERR == state && info.getPwdIsRight()){
+				info.setIsOnline(false);
+				info.setPwdIsRight(false);
+				if(mCameraStateListeners.size() > 0){
+					 for (CameraStateListener l : mCameraStateListeners) {
+						 l.onCameraStateChange(streamerCid, state);
+					}
+				 }
+			}else {
+				boolean online = false;
+				if(StreamerPresenceState.ONLINE == state){
+					online = true;
+					info.setPwdIsRight(true);
+				}
+				if(info.getIsOnline() != online){
+					info.setIsOnline(online);
+					 if(mCameraStateListeners.size() > 0){
+						 for (CameraStateListener l : mCameraStateListeners) {
+							 l.onCameraStateChange(streamerCid, state);
+						}
+					 }
+				}
+			}
+		}
+		
 	}
 
 	@Override
@@ -104,8 +213,14 @@ public class MyViewerHelper extends ViewerInitHelper{
 		mLoginListener = l;
 	}
 	
-	public void setCameraStateListener(CameraStateListener l){
-		mCameraStateListener = l;
+	public void addCameraStateListener(CameraStateListener l){
+		if(!mCameraStateListeners.contains(l)){
+			mCameraStateListeners.add(l);
+		}
+	}
+	
+	public void removeCameraStateListener(CameraStateListener l){
+		mCameraStateListeners.remove(l);
 	}
 	
 	public interface LoginListener{

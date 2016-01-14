@@ -21,10 +21,8 @@ import com.google.ads.AdView;
 import com.ichano.rvs.viewer.ui.GLMediaView;
 import com.ichano.rvs.viewer.ui.GLMediaView.LinkCameraStatusListener;
 import com.umeng.analytics.MobclickAgent;
-import com.zhongyun.viewer.utils.AppUtils;
 import com.zhongyun.viewer.utils.Constants;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -33,7 +31,6 @@ import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
-import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;

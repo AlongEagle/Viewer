@@ -9,6 +9,7 @@
     <dimen name="dp_2">2dp</dimen>
     <dimen name="dp_5">5dp</dimen>
     <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_18">18dp</dimen>
     <dimen name="dp_20">20dp</dimen>
     <dimen name="thumb_rouder_conner">6dp</dimen>
     <dimen name="about_info_text_size">16dp</dimen>

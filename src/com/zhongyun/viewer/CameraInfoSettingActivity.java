@@ -1,3 +1,18 @@
+/*
+ * Copyright (C) 2015 iChano incorporation's Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.zhongyun.viewer;
 
 import com.ichano.rvs.viewer.Command;
@@ -27,8 +42,11 @@ public class CameraInfoSettingActivity extends BaseActivity
 	private Command mCommand;
 	private StreamerInfoMgr mStreamerInfoMgr;
 	private CameraInfoManager mCameraInfoManager;
+	private MyViewerHelper mMyViewerHelper;
 	private CameraInfo mCameraInfo;
 	private long mChangePwdRequestId = 0;
+	private String mNewPwd = "";
+	private boolean mHaveUpdatePwd = false;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,12 +63,13 @@ public class CameraInfoSettingActivity extends BaseActivity
 		mCommand = Viewer.getViewer().getCommand();
 		mCommand.setCmdCallback(this);
 		mStreamerInfoMgr = Viewer.getViewer().getStreamerInfoMgr();
-		
+
+		mMyViewerHelper = MyViewerHelper.getInstance(getApplicationContext());
 		mCameraInfoManager = new CameraInfoManager(this);
 		Intent intent = getIntent();
 		if(null != intent){
 			long cid = intent.getLongExtra(Constants.INTENT_CID, 0);
-			mCameraInfo = mCameraInfoManager.getCameraInfo(cid);
+			mCameraInfo = mMyViewerHelper.getCameraInfo(cid);
 			mDeviceNameView.setText(mCameraInfo.getCameraName());
 			mPasswordView.setText(mCameraInfo.getCameraPwd());
 			mConfirmPasswordView.setText(mCameraInfo.getCameraPwd());
@@ -62,6 +81,11 @@ public class CameraInfoSettingActivity extends BaseActivity
 		int id = v.getId();
 		switch(id){
 		case R.id.modify:
+			if(!mCameraInfo.getIsOnline()){
+				Toast.makeText(CameraInfoSettingActivity.this, R.string.camera_offline, Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			String deviceName = mDeviceNameView.getText().toString();
 			String pwd = mPasswordView.getText().toString();
 			String pwdConfirm = mConfirmPasswordView.getText().toString();
@@ -101,8 +125,9 @@ public class CameraInfoSettingActivity extends BaseActivity
 				}
 			}
 			if(!pwd.equals(mCameraInfo.getCameraPwd())){
+				mHaveUpdatePwd = false;
 				mChangePwdRequestId = mCommand.changeStreamerLoginUserPwd(mCameraInfo.getCid(), mCameraInfo.getCameraUser(), pwd);
-				mCameraInfo.setCameraPwd(pwd);
+				mNewPwd = pwd;
 			}
 			
 			break;
@@ -113,11 +138,19 @@ public class CameraInfoSettingActivity extends BaseActivity
 	public void onCmdRequestStatus(long requestID, int statusCode) {
 		if(mChangePwdRequestId == requestID){
 			if(0 == statusCode){
-				mCameraInfoManager.update(mCameraInfo);
-				Toast.makeText(CameraInfoSettingActivity.this, R.string.change_password_success, Toast.LENGTH_LONG).show();
+				if(!mHaveUpdatePwd){
+					mCameraInfo.setCameraPwd(mNewPwd);
+					mCameraInfoManager.update(mCameraInfo);
+					Toast.makeText(CameraInfoSettingActivity.this, R.string.change_password_success, Toast.LENGTH_LONG).show();
+					mHaveUpdatePwd = true;
+					Viewer.getViewer().disconnectStreamer(mCameraInfo.getCid());
+					mCameraInfo.setIsOnline(false);
+					Viewer.getViewer().connectStreamer(mCameraInfo.getCid(), mCameraInfo.getCameraUser(), mCameraInfo.getCameraPwd());
+				}
 			}else{
 				Toast.makeText(CameraInfoSettingActivity.this, R.string.change_password_fail, Toast.LENGTH_LONG).show();
 			}
 		}
 	}
+
 }

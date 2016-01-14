@@ -31,6 +31,10 @@
 		<Button android:id="@+id/modify"
 		    android:layout_width="match_parent"
 	    	android:layout_height="wrap_content"
-	    	android:text="@string/modify_camera_info"/>
+	    	android:text="@string/modify_camera_info"
+	    	android:background="@drawable/red_btn_selector"
+	    	android:layout_marginTop="@dimen/dp_10"
+	    	android:textColor="@color/white"
+	    	android:textSize="@dimen/dp_18"/>
 	</LinearLayout>"
 </LinearLayout>

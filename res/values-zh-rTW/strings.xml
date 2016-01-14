@@ -17,8 +17,8 @@
     <string name="cancel">取消</string>
     <string name="add_camera_dlg_title">添加新攝像頭</string>
     <string name="cid">CID</string>
-    <string name="password">新密碼</string>
-    <string name="password_confirm">確認新密碼</string>
+    <string name="password">新密碼：</string>
+    <string name="password_confirm">確認新密碼：</string>
     <string name="empty_info">CID和密碼不能為空！</string>
     <string name="short_pwd">密碼長度至少是6位！</string>
     <string name="confirm_pwd_error">兩次輸入的密碼不一致！</string>

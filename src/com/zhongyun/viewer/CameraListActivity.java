@@ -74,7 +74,6 @@ public class CameraListActivity extends BaseActivity
 
 	private static final String TAG = CameraListActivity.class.getSimpleName();
 	private final static int SCANNIN_GREQUEST_CODE = 1;
-	private final static long GET_THUMB_PERIOD = 600000;
 	private final static String DEFAULT_USER = "admin";
 
 	private static final String AD_UNIT_ID = "ca-app-pub-4895175297664182/1269168158";
@@ -91,11 +90,7 @@ public class CameraListActivity extends BaseActivity
 	private ListView mCameraListView;
 	private ImageView mMenuView;
 	private PopupMenu mMenu;
-	private Handler mHandler = new Handler();
 	private LayoutInflater mLayoutInflater;
-	@SuppressLint("UseSparseArrays")
-	private HashMap<Long, Long> mThumbsGetTime = new HashMap<Long, Long>();
-	private HashMap<Long, Long> mThumbRequestMap = new HashMap<Long, Long>();
 	private Dialog mAboutDialog;
 	private Dialog mDisclaimerDialog;
 	private Dialog mAddCameraDlg;
@@ -119,12 +114,11 @@ public class CameraListActivity extends BaseActivity
 		
 		mViewer = Viewer.getViewer();
 		mMyViewerHelper = MyViewerHelper.getInstance(getApplicationContext());
-		mMyViewerHelper.setCameraStateListener(this);
+		mMyViewerHelper.addCameraStateListener(this);
 		mCameraDefaulThumb = BitmapFactory.decodeResource(getResources(), R.drawable.avs_type_android);
 		
 		mCameraInfoManager = new CameraInfoManager(this);
-		mCameraInfos = mCameraInfoManager.getAllCameraInfos();
-		if(null == mCameraInfos) mCameraInfos = new ArrayList<CameraInfo>();
+		mCameraInfos = mMyViewerHelper.getAllCameraInfos();
 		for (CameraInfo info : mCameraInfos) {
 			addStreamer(info.getCid(), info.getCameraUser(), info.getCameraPwd());
 		}
@@ -146,19 +140,10 @@ public class CameraListActivity extends BaseActivity
 		adContainer.addView(ad);
 	}
 	
-	private CameraInfo getCameraInfo(long cid){
-		for (CameraInfo info : mCameraInfos) {
-			if(cid == info.getCid()){
-				return info;
-			}
-		}
-		return null;
-	}
-	
 	//添加采集端
 	public void addStreamer(long streamerCid, String user, String pass){
 		boolean ret = mViewer.connectStreamer(streamerCid, user, pass);
-		CameraInfo info = getCameraInfo(streamerCid);
+		CameraInfo info = mMyViewerHelper.getCameraInfo(streamerCid);
 		if(ret) {
 			if(null == info){
 				StreamerInfo  sinfo = mViewer.getStreamerInfoMgr().getStreamerInfo(streamerCid);
@@ -173,7 +158,7 @@ public class CameraListActivity extends BaseActivity
 				info.setPwdIsRight(true);
 				info.setOS(sinfo.getOsVersion());
 				mCameraInfoManager.addCameraInfo(info);
-				mCameraInfos.add(info);
+				mMyViewerHelper.addCameraInfo(info);
 				mCameraListAdapter.notifyDataSetChanged();
 			}
 		}else{
@@ -191,62 +176,12 @@ public class CameraListActivity extends BaseActivity
 	
 	@Override
 	public void onCameraConnectionChange(long streamerCID, boolean connected) {
-		long lastTime = (null == mThumbsGetTime.get(streamerCID)) ? 0 : mThumbsGetTime.get(streamerCID);
-		long cur = System.currentTimeMillis();
-		
-		//do not get thumb so busy.
-		if(cur - lastTime > GET_THUMB_PERIOD){
-			mThumbsGetTime.put(streamerCID, cur);
-			long requestId =  mViewer.getMedia().requestJpeg(streamerCID, 0, 0, RvsJpegType.ICON, new RecvJpegListener() {
-				
-				@Override
-				public void onRecvJpeg(long requestId,byte[] data) {
-					if(null == mThumbRequestMap.get(requestId)) return;
-					long cid = mThumbRequestMap.get(requestId);
-					Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-					CameraInfo info = getCameraInfo(cid);
-					if(null != info && null != bmp){
-						info.setCameraThumb(bmp);
-						mCameraInfoManager.update(info);
-						mHandler.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								mCameraListAdapter.notifyDataSetChanged();
-							}
-						});
-					}
-				}
-			});
-			mThumbRequestMap.put(requestId, streamerCID);
-		}
+		mCameraListAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
 	public void onCameraStateChange(long streamerCid, StreamerPresenceState state) {
-		CameraInfo info = getCameraInfo(streamerCid);
-		if(null != info){
-			StreamerInfo  sinfo = mViewer.getStreamerInfoMgr().getStreamerInfo(streamerCid);
-			String name = sinfo.getDeviceName();
-			if(null != name && (!info.getCameraName().equals(name))){
-				info.setCameraName(name);
-				mCameraInfoManager.update(info);
-			}
-			if(StreamerPresenceState.USRNAME_PWD_ERR == state && info.getPwdIsRight()){
-				info.setIsOnline(false);
-				info.setPwdIsRight(false);
-				mCameraListAdapter.notifyDataSetChanged();
-			}else {
-				boolean online = false;
-				if(StreamerPresenceState.ONLINE == state){
-					online = true;
-				}
-				if(info.getIsOnline() != online){
-					info.setIsOnline(online);
-					mCameraListAdapter.notifyDataSetChanged();
-				}
-			}
-		}
+		mCameraListAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
@@ -457,7 +392,7 @@ public class CameraListActivity extends BaseActivity
 		for (CameraInfo info : mCameraInfos) {
 			removeStreamer(info.getCid());
 		}
-		mMyViewerHelper.setCameraStateListener(null);
+		mMyViewerHelper.removeCameraStateListener(this);
 		mMyViewerHelper.logout();
 		android.os.Process.killProcess(android.os.Process.myPid());
 	}
@@ -533,7 +468,7 @@ public class CameraListActivity extends BaseActivity
 						public void onClick(DialogInterface dialog, int which) {
 							removeStreamer(info.getCid());
 							mCameraInfoManager.delete(info);
-							mCameraInfos.remove(info);
+							mMyViewerHelper.removeCameraInfo(info);
 							mCameraListAdapter.notifyDataSetChanged();
 						}
 					})

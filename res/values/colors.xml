@@ -4,4 +4,7 @@
 	<color name="title_red">#ff8772</color>
 	<color name="black">#534e48</color>
 	<color name="gray">#cdcdcd</color>
+	
+	<color name="red_btn_pressed">#a50700</color>
+	<color name="red_btn_default">#E0263B</color>
 </resources>
