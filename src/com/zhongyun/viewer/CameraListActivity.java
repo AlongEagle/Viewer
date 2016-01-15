@@ -234,7 +234,14 @@ public class CameraListActivity extends BaseActivity
 						Toast.makeText(CameraListActivity.this, R.string.empty_info, Toast.LENGTH_LONG).show();
 						return;
 					}
-					addStreamer(Long.parseLong(cid), DEFAULT_USER, pwd);
+					long cidLong = 0;
+					try{
+						cidLong = Long.parseLong(cid);
+					}catch(NumberFormatException e){
+						Toast.makeText(CameraListActivity.this, R.string.invalid_cid, Toast.LENGTH_LONG).show();
+						return;
+					}
+					addStreamer(cidLong, DEFAULT_USER, pwd);
 				}
 			})
 			.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -334,10 +341,20 @@ public class CameraListActivity extends BaseActivity
 			if(resultCode == RESULT_OK){
 				Bundle bundle = data.getExtras();
 				String barcode = bundle.getString(Intents.Scan.RESULT);
-				String[] results = barcode.split("&");
-				String cid = results[0].replace("cid=", "");
-				String userName = results[1].replace("username=", "");
-				String password = results[2].replace("password=", "");
+				if((!barcode.contains(Constants.BARCODE_CID)) || 
+						(!barcode.contains(Constants.BARCODE_USER_NAME)) ||
+						(!barcode.contains(Constants.BARCODE_PASSWORD))){
+					Toast.makeText(this, R.string.invalid_barcode, Toast.LENGTH_LONG).show();
+					return;
+				}
+				String[] results = barcode.split(Constants.BARCODE_SPLITER);
+				if(results.length != 3){
+					Toast.makeText(this, R.string.invalid_barcode, Toast.LENGTH_LONG).show();
+					return;
+				}
+				String cid = results[0].replace(Constants.BARCODE_CID, "");
+				String userName = results[1].replace(Constants.BARCODE_USER_NAME, "");
+				String password = results[2].replace(Constants.BARCODE_PASSWORD, "");
 				Log.i(TAG,"cid = " + cid + ", userName = " + userName + ", password = " + password);
 				addStreamer(Long.parseLong(cid), userName, password);
 			}

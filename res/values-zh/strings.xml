@@ -22,6 +22,8 @@
     <string name="empty_info">CID和密码不能为空！</string>
     <string name="short_pwd">密码长度至少是6位！</string>
     <string name="confirm_pwd_error">两次输入的密码不一致！</string>
+    <string name="invalid_barcode">只可以扫描“众云监控采集端”的二维码！</string>
+    <string name="invalid_cid">CID必须为数字！</string>
     <string name="invalid_pwd">密码必须包含字母和数字！</string>
     <string name="invalid_device_name">设备名只能为数字、字母和中文字符！</string>
     <string name="change_device_name_fail">修改设备名失败！</string>

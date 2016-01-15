@@ -22,6 +22,8 @@
     <string name="empty_info">CID and password can not be blank！</string>
     <string name="short_pwd">Password should be 6 or more characters.</string>
     <string name="confirm_pwd_error">Please confirm your password.</string>
+    <string name="invalid_barcode">Only can scan ZY Streamer\'s barcode.</string>
+    <string name="invalid_cid">CID must be numbers！</string>
     <string name="invalid_pwd">Password must contain numbers and letters.</string>
     <string name="invalid_device_name">device name is alphanumeric.</string>
     <string name="change_device_name_fail">Modify device name failed.</string>

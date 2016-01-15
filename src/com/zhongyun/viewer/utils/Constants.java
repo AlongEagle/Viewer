@@ -19,4 +19,9 @@ public class Constants {
 
 	public static final String INTENT_CID = "cid";
 	public static final String INTENT_CAMERA_NAME = "camera_name";
+	
+	public static final String BARCODE_SPLITER = "&";
+	public static final String BARCODE_CID = "cid=";
+	public static final String BARCODE_USER_NAME = "username=";
+	public static final String BARCODE_PASSWORD = "password=";
 }
