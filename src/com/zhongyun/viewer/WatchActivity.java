@@ -50,7 +50,7 @@ public class WatchActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_watch);
 		TextView titleView = (TextView) findViewById(R.id.title);
 		mGLMediaView = (GLMediaView) findViewById(R.id.media_view);
 		mCid = getIntent().getLongExtra(Constants.INTENT_CID, 0);
