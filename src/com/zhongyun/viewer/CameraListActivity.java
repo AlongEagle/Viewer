@@ -348,7 +348,7 @@ public class CameraListActivity extends BaseActivity
 					return;
 				}
 				String[] results = barcode.split(Constants.BARCODE_SPLITER);
-				if(results.length != 3){
+				if(results.length != 4){
 					Toast.makeText(this, R.string.invalid_barcode, Toast.LENGTH_LONG).show();
 					return;
 				}
