@@ -22,6 +22,8 @@ import com.ichano.rvs.viewer.ui.GLMediaView;
 import com.ichano.rvs.viewer.ui.GLMediaView.LinkCameraStatusListener;
 import com.umeng.analytics.MobclickAgent;
 import com.zhongyun.viewer.utils.Constants;
+import com.zhongyun.viewer.utils.ZYDateUtils;
+import com.zhongyun.viewer.utils.FileUtils;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -31,11 +33,15 @@ import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
-public class WatchActivity extends BaseActivity {
+public class WatchActivity extends BaseActivity 
+	implements View.OnClickListener{
 
 	private static final String TIME_UP_ERROR = "TIME_UP";
 	private static final int DEFAULT_CAMERA_INDEX = 0;
@@ -47,17 +53,30 @@ public class WatchActivity extends BaseActivity {
 	private Dialog mExitDialog;
 	private ProgressDialog mWaitingDialog;
 	
+	private LinearLayout mSoundSwitcherView;
+	private ImageView mSoundSwitcherIconView;
+	private TextView mSoundSwitcherNameView;
+	
+	private LinearLayout mRecordVideoView;
+	private ImageView mRecordVideoIconView;
+	private TextView mRecordVideoNameView;
+	private String mRecordVideoPath;
+	
+	private LinearLayout mHoldTalkView;
+	private ImageView mHoldTalkIconView;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_watch);
 		TextView titleView = (TextView) findViewById(R.id.title);
+		initOperateView();
 		mGLMediaView = (GLMediaView) findViewById(R.id.media_view);
 		mCid = getIntent().getLongExtra(Constants.INTENT_CID, 0);
 		String title = getIntent().getStringExtra(Constants.INTENT_CAMERA_NAME);
 		titleView.setText(title);
 		mGLMediaView.bindCid(mCid, DEFAULT_CAMERA_INDEX);
-		mGLMediaView.openAudio(true);
+		mGLMediaView.openAudio(true);//打开音频采集。
 		mGLMediaView.setOnLinkCameraStatusListener(new LinkCameraStatusListener() {
 			
 			@Override
@@ -101,9 +120,25 @@ public class WatchActivity extends BaseActivity {
 		//admob ad
 		RelativeLayout adContainer = (RelativeLayout) findViewById(R.id.adLayout);
 		AdView ad = new AdView(this, AdSize.BANNER, AD_UNIT_ID);
-		//.addTestDevice("703C305FC29B7ED91BD7625874CFDEBC")
 		ad.loadAd(new AdRequest());
 		adContainer.addView(ad);
+	}
+	
+	private void initOperateView(){
+		mSoundSwitcherView = (LinearLayout) findViewById(R.id.sound_switcher);
+		mSoundSwitcherView.setOnClickListener(this);
+		mSoundSwitcherIconView = (ImageView) findViewById(R.id.sound_switcher_icon);
+		mSoundSwitcherNameView = (TextView) findViewById(R.id.sound_switcher_name);
+		
+		mRecordVideoView = (LinearLayout) findViewById(R.id.record_video);
+		mRecordVideoView.setOnClickListener(this);
+		mRecordVideoIconView = (ImageView) findViewById(R.id.record_video_icon);
+		mRecordVideoNameView = (TextView) findViewById(R.id.record_video_name);
+		mRecordVideoPath = FileUtils.mkdirsOnSDCard(Constants.RECORD_VIDEO_PATH).getAbsolutePath();
+		
+		mHoldTalkView = (LinearLayout) findViewById(R.id.hold_talk);
+		mHoldTalkView.setOnClickListener(this);
+		mHoldTalkIconView = (ImageView) findViewById(R.id.hold_talk_icon);
 	}
 	
 	private void showLinkFailDlg(){
@@ -173,5 +208,55 @@ public class WatchActivity extends BaseActivity {
 	public void onBackPressed() {
 		//super.onBackPressed();
 		showExitDlg();
+	}
+
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		switch(id){
+		case R.id.sound_switcher:
+			if(mGLMediaView.isSoundOn()){
+				mGLMediaView.soundOff();
+				mSoundSwitcherIconView.setImageResource(R.drawable.sound_on);
+				mSoundSwitcherNameView.setText(R.string.sound_on);
+			}else{
+				mGLMediaView.soundOn();
+				mSoundSwitcherIconView.setImageResource(R.drawable.sound_off);
+				mSoundSwitcherNameView.setText(R.string.sound_off);
+			}
+			break;
+		case R.id.record_video:
+			if(mGLMediaView.isRecordingVideo()){
+				boolean ret = mGLMediaView.stopRecordVideo();
+				mRecordVideoIconView.setImageResource(R.drawable.record_off);
+				mRecordVideoNameView.setText(R.string.record);
+				if(ret){
+					String toastStr = getResources().getString(R.string.recording_saved, mRecordVideoPath);
+					Toast.makeText(this, toastStr, Toast.LENGTH_LONG).show();
+				}else{
+					Toast.makeText(this, R.string.record_failed, Toast.LENGTH_LONG).show();
+				}
+			}else{
+				if(FileUtils.hasSDCard()){
+					String path = mRecordVideoPath + "/" + ZYDateUtils.getTime() + Constants.VIDEO_MP4;
+					mGLMediaView.startRecordVideo(path);
+					mRecordVideoIconView.setImageResource(R.drawable.record_on);
+					mRecordVideoNameView.setText(R.string.recording);
+				}
+			}
+			break;
+		case R.id.hold_talk:
+			if(mGLMediaView.isSendRevAudio()){
+				mGLMediaView.stopSendRevAudio();
+				mHoldTalkIconView.setImageResource(R.drawable.hold_talk);
+			}else{
+				mGLMediaView.startSendRevAudio();
+				mHoldTalkIconView.setImageResource(R.drawable.hold_talk_pressed);
+			}
+			break;
+			default:
+				break;
+		}
+		
 	}
 }

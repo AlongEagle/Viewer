@@ -38,6 +38,14 @@
     <string name="waiting">实时视频等待中...</string>
     <string name="device_name">设备名：</string>
     <string name="modify_camera_info">修改采集端信息</string>
+    <string name="sound_on">打开声音</string>
+    <string name="sound_off">关闭声音</string>
+    <string name="record">录制视频</string>
+    <string name="recording">正在录制...</string>
+    <string name="recording_saved">录制视频存放在 %1$s</string>
+    <string name="record_failed">录制视频失败。</string>
+    <string name="hold_talk">按住说话</string>
+    
     <string name="time_up_error">您还没有注册成为我们的开发者，所以只能观看2分钟视频，快来注册吧！</string>
     <string name="wrong_package_name">如果您要创建自己的应用，请到官网注册并获取授权！</string>
 	<string name="about_str"> %1$s \n版本：%2$s \n南京云恩通讯科技有限公司(C)2011-2015 \ndev.ichano.cn \n开源协议：Apache License 2.0 \nQQ用户群：151981896</string>

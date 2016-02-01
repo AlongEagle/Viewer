@@ -14,5 +14,64 @@
     <com.ichano.rvs.viewer.ui.GLMediaView
         android:id="@+id/media_view"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"/>
+	    android:layout_height="0dp"
+	    android:layout_weight="1.0"/>
+    <ScrollView 
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content">
+        <LinearLayout 
+            android:layout_width="match_parent"
+	    	android:layout_height="wrap_content"
+	    	android:orientation="horizontal"
+	    	android:gravity="center">
+            <LinearLayout android:id="@+id/sound_switcher"
+	            android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:orientation="vertical"
+		    	android:layout_margin="@dimen/dp_20"
+	    		android:gravity="center">
+            	<ImageView android:id="@+id/sound_switcher_icon"
+		            android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:src="@drawable/sound_off"/>
+            	<TextView android:id="@+id/sound_switcher_name"
+		            android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="@string/sound_off"/>
+        	</LinearLayout>
+        	
+            <LinearLayout android:id="@+id/record_video"
+	            android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:orientation="vertical"
+		    	android:layout_margin="@dimen/dp_20"
+	    		android:gravity="center">
+            	<ImageView android:id="@+id/record_video_icon"
+		            android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:src="@drawable/record_off"/>
+            	<TextView android:id="@+id/record_video_name"
+		            android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="@string/record"/>
+        	</LinearLayout>
+        	
+            <LinearLayout android:id="@+id/hold_talk"
+	            android:layout_width="wrap_content"
+		    	android:layout_height="wrap_content"
+		    	android:orientation="vertical"
+		    	android:layout_margin="@dimen/dp_20"
+	    		android:gravity="center">
+            	<ImageView android:id="@+id/hold_talk_icon"
+		            android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:src="@drawable/hold_talk"/>
+            	<TextView
+		            android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="@string/hold_talk"/>
+        	</LinearLayout>
+        	
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

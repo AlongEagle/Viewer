@@ -15,17 +15,26 @@
  */
 package com.zhongyun.viewer.utils;
 
-public class Constants {
+import java.io.File;
 
-	public static final String INTENT_CID = "cid";
-	public static final String INTENT_CAMERA_NAME = "camera_name";
+import android.os.Environment;
+
+public class FileUtils {
+
+	public static boolean hasSDCard() {
+		String status = Environment.getExternalStorageState();
+		if (status.equals(Environment.MEDIA_MOUNTED)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
-	public static final String BARCODE_SPLITER = "&";
-	public static final String BARCODE_CID = "cid=";
-	public static final String BARCODE_USER_NAME = "username=";
-	public static final String BARCODE_PASSWORD = "password=";
-
-	public static final String VIDEO_MP4 = ".mp4";
-	public static final String RECORD_VIDEO_PATH = "ZhongYun/recordVideo";
-	public static final String CAPTURE_IAMGE_PATH = "ZhongYun/capture";
+	public static File mkdirsOnSDCard(String pathName){
+		File file = new File(Environment.getExternalStorageDirectory(), pathName);
+		if (!file.exists()){
+			file.mkdirs();
+		}
+		return file;
+	}
 }

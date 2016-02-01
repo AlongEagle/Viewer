@@ -15,8 +15,6 @@
  */
 package com.zhongyun.viewer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,8 +24,6 @@ import com.google.ads.AdView;
 import com.google.zxing.client.android.Intents;
 import com.ichano.rvs.viewer.Viewer;
 import com.ichano.rvs.viewer.bean.StreamerInfo;
-import com.ichano.rvs.viewer.callback.RecvJpegListener;
-import com.ichano.rvs.viewer.constant.RvsJpegType;
 import com.ichano.rvs.viewer.constant.StreamerPresenceState;
 import com.journeyapps.barcodescanner.CaptureActivity;
 import com.umeng.analytics.MobclickAgent;
@@ -38,8 +34,6 @@ import com.zhongyun.viewer.db.CameraInfoManager;
 import com.zhongyun.viewer.utils.AppUtils;
 import com.zhongyun.viewer.utils.Constants;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -48,14 +42,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
