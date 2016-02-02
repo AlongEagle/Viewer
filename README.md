@@ -1,43 +1,42 @@
-众云监控观看端
+iChano Camera Viewer App
 ===
+  
+####This project is the open source for video surveillance app "iChano Camera”,####
+####"iChano Camera Viewer" is a lite version of popular app "AtHome Camera".####
+####We release the SDK, which we used to develop the app of "AtHome Camera",####
+####This app is to demostrate how to use the SDK API. You need register on dev.ichano.com to obtain licenses.####
 
-####本开源代码原型是市场上的公开应用“众云监控”，####
-####这是"掌上看家"同公司人马倾情打造的，代码开源。####
-####开发者们可以免费获取源代码，根据自己的需求，DIY自己想要的监控APP，####
-####想要获取更多功能、更多体验请到官网注册：dev.ichano.com(注册就送100个CID)。####
-
-
-开发者
+Developer
 ------------
-* 南京云恩通讯科技有限公司 - <developer@ichano.com>
+* iChano Corp. - <developer@ichano.com>
 
 
-需要配合使用的项目
+You also need to download and use video capture app 
 -----
-* [AVS] [5] 此项目为众云监控采集端
+* [AVS] [5] iChano Streamer App
 
 
-本项目使用的库
+This project needs following libs
 ------------------------------
 * [zxing] [1]
 * [android-support-v7-appcompat] [2]
 * [RoundImageView] [3]
 * [QRScanner] [4]
 
-编译需求
+Compiler Requirement
 ------------------------------
 * Android 6.0
 
-运行需求
+Running Android version
 ------------------------------
 * Android 2.3
 
 
-应用截图
+App Snapshot
 -----------
 ![Image](screenshot1.png)![Image](screenshot2.png)![Image](screenshot3.png)![Image](screenshot4.png)
 
-开源协议
+Open Source
 -------
 
   Copyright (C) 2015 iChano incorporation's Open Source Project
